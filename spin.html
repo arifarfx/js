@@ -74,17 +74,8 @@ body {
   background-color: #f44336;
   transform: rotate(315deg);
 }
-.arrow {
-  position: absolute;
-  top: 2.5vw;
-  left: 50%;
-  transform: translateX(-50%);
-  color: black;
-}
-.arrow::before {
-  content: "\1F817";
-  font-size: 6.25vw;
-}
+
+
 #spin {
   position: absolute;
   top: 50%;
@@ -108,10 +99,41 @@ body {
   align-items: center;
   justify-content: center;
 }
+
+.spin-button {
+  position: relative;
+  padding: 10px 20px;
+  background-color: #f2f2f2;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.spin-button::before {
+  content: "";
+  position: absolute;
+  top: -10px; /* Atur posisi atas segitiga */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 10px solid #f2f2f2; /* Warna segitiga harus sama dengan background-color tombol spin */
+}
+/* Media query untuk layar besar */
+@media (min-width: 768px) {
+  .spin-button::before {
+    border-left-width: 20px;
+    border-right-width: 20px;
+    border-bottom-width: 20px;
+    top: -20px;
+  }
+}
     </style>
 </head>
 <body>
-	<button id="spin">Spin</button>
+	<button id="spin" class="spin-button">Spin</button>
 	<span class="arrow"></span>
 <div class="container" id="indu">
 	<div class="one">1</div>
@@ -135,7 +157,24 @@ btn.onclick = function () {
 	// deg = container.style.transform
 	// const actualDeg = container.style.transform % 360;
 	// const actualDeg = number % 360;
-	
+    // penambahan probabilitas
+	const probabilities = [0.25, 0.15, 0.002, 0.22, 0.018, 0.11, 0.2, 0.0];
+    function getRandomAngle(probabilities) {
+  const totalProbability = probabilities.reduce((acc, val) => acc + val, 0);
+  const randomValue = Math.random() * totalProbability;
+
+  let currentProbability = 0;
+  for (let i = 0; i < probabilities.length; i++) {
+    currentProbability += probabilities[i];
+    if (randomValue <= currentProbability) {
+      const anglePerSlice = 360 / probabilities.length;
+      const minAngle = anglePerSlice * i;
+      const maxAngle = anglePerSlice * (i + 1);
+      return Math.random() * (maxAngle - minAngle) + minAngle;
+    }
+  }
+}
+const angle = getRandomAngle(probabilities);
 	// console.log(deg);
 // 	function radians_to_degrees(radians)
 // {
